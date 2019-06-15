@@ -9,10 +9,18 @@
 import UIKit
 
 class MovieCell: UICollectionViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    static let cellIdentifier = "cell"
+    @IBOutlet weak var imageView: UIImageView!
+    
+    func configure(movie: Movie, index: Int, delegate: LoadImagesDelegate?) {
+        if let image = movie.posterImage {
+            self.imageView.image = image
+        }else {
+            delegate?.loadBackdropImage(index: index) { [weak self] (image) in
+                DispatchQueue.main.async {
+                    self?.imageView.image = image
+                }                
+            }
+        }
     }
-
 }

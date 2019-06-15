@@ -7,10 +7,22 @@
 //
 
 import Foundation
+import UIKit
 
-class SearchViewModel {
+protocol LoadImagesDelegate {
+    func loadPosterImage(index: Int, completion: @escaping (UIImage?) -> Void)
+    func loadBackdropImage(index: Int, completion: @escaping (UIImage?) -> Void)
+}
+
+class MovieViewModel: NSObject {
     var movies: [Movie]
     var movieService: MovieService
+    var count: Int {
+        return movies.count
+    }
+    subscript(index: Int) -> Movie {
+        return movies[index]
+    }
     
     init(movies: [Movie], movieService: MovieService) {
         self.movies = movies
@@ -21,6 +33,24 @@ class SearchViewModel {
         movieService.search(query: query) { [weak self] (movies) in
             self?.movies = movies
             completion()
+        }
+    }
+}
+
+extension MovieViewModel: LoadImagesDelegate, LoadImageService {
+    func loadPosterImage(index: Int, completion: @escaping (UIImage?) -> Void) {
+        guard let imageUrl = movies[index].posterPath else { return }
+        loadImage(imageUrl: imageUrl) { [weak self] (image) in
+            self?.movies[index].posterImage = image
+            completion(image)
+        }
+    }
+    
+    func loadBackdropImage(index: Int, completion: @escaping (UIImage?) -> Void) {
+        guard let imageUrl = movies[index].backdropPath else { return }
+        loadImage(imageUrl: imageUrl) { [weak self] (image) in
+            self?.movies[index].backdropImage = image
+            completion(image)
         }
     }
 }

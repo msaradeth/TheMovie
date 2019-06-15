@@ -7,3 +7,24 @@
 //
 
 import Foundation
+import UIKit
+
+
+protocol LoadImageService {
+    func loadImage(imageUrl: String, completion: @escaping (UIImage?) -> Void)
+}
+extension LoadImageService {
+    func loadImage(imageUrl: String, completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: imageUrl) else { return }
+        DispatchQueue.global(qos: .userInteractive).async {            
+            do {
+                let data = try Data(contentsOf: url)
+                let image = UIImage(data: data)
+                completion(image)
+            }catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+}
+

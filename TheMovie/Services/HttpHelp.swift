@@ -17,7 +17,7 @@ class HttpHelp: NSObject {
     }
     
     deinit {
-        print("HttpHelp func deinit() debug")
+        print("deinit: HttpHelp")
     }
     
 }
