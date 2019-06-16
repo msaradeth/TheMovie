@@ -10,16 +10,9 @@ import Foundation
 
 
 struct MovieService {
-    struct SearchMovieService: Codable {
-        var page: Int
-        var total_results: Int
-        var total_pages: Int
+    private struct SearchMovieService: Codable {
         var movies: [Movie]
-        
         enum CodingKeys: String, CodingKey {
-            case page
-            case total_results
-            case total_pages
             case movies = "results"
         }
     }
@@ -28,13 +21,12 @@ struct MovieService {
         let urlString = "https://api.themoviedb.org/3/search/movie?api_key=a8f60f96f427faecddc13ba4782b2686&language=en-US&query=\(query)&page=1&include_adult=false"
         
         HttpHelp.request(urlString, method: .get, success: { (dataResponse) in
-            print(dataResponse)
             guard let data = dataResponse.data else { return }
             do {
                 let decoder = JSONDecoder()
-                let serchMovieService = try decoder.decode(SearchMovieService.self, from: data)
-                completion(serchMovieService.movies)
-                print(serchMovieService.movies)
+                let searchMovieService = try decoder.decode(SearchMovieService.self, from: data)
+                let movies = searchMovieService.movies.filter{ $0.posterPath != nil && $0.backdropPath != nil }
+                completion(movies)
             }catch let error {
                 print(error.localizedDescription)
             }

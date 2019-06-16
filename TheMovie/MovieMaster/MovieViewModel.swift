@@ -9,9 +9,12 @@
 import Foundation
 import UIKit
 
+enum ImageType {
+    case poster
+    case backdrop
+}
 protocol LoadImagesDelegate {
-    func loadPosterImage(index: Int, completion: @escaping (UIImage?) -> Void)
-    func loadBackdropImage(index: Int, completion: @escaping (UIImage?) -> Void)
+    func loadImage(imageType: ImageType, index: Int, completion: @escaping (UIImage?) -> Void)
 }
 
 class MovieViewModel: NSObject {
@@ -30,6 +33,7 @@ class MovieViewModel: NSObject {
     }
     
     func search(query: String, completion: @escaping () -> Void) {
+        guard query.count > 0 else { return } 
         movieService.search(query: query) { [weak self] (movies) in
             self?.movies = movies
             completion()
@@ -38,18 +42,15 @@ class MovieViewModel: NSObject {
 }
 
 extension MovieViewModel: LoadImagesDelegate, LoadImageService {
-    func loadPosterImage(index: Int, completion: @escaping (UIImage?) -> Void) {
-        guard let imageUrl = movies[index].posterPath else { return }
+    func loadImage(imageType: ImageType, index: Int, completion: @escaping (UIImage?) -> Void) {
+        let imageUrl = (imageType == .poster) ? movies[index].posterPath : movies[index].backdropPath
+        
         loadImage(imageUrl: imageUrl) { [weak self] (image) in
-            self?.movies[index].posterImage = image
-            completion(image)
-        }
-    }
-    
-    func loadBackdropImage(index: Int, completion: @escaping (UIImage?) -> Void) {
-        guard let imageUrl = movies[index].backdropPath else { return }
-        loadImage(imageUrl: imageUrl) { [weak self] (image) in
-            self?.movies[index].backdropImage = image
+            if imageType == .poster {
+                self?.movies[index].posterImageCache = image
+            }else {
+                self?.movies[index].backdropImageCache = image
+            }
             completion(image)
         }
     }

@@ -15,10 +15,9 @@ struct Movie: Codable {
     var title: String
     var posterPath: String?
     var backdropPath: String?
-    var overview: String
-    
-    var posterImage: UIImage?
-    var backdropImage: UIImage?
+    var overview: String    
+    var posterImageCache: UIImage?
+    var backdropImageCache: UIImage?
     
     enum CodingKeys: String, CodingKey {
         case id
