@@ -36,11 +36,6 @@ class MovieVC: UICollectionViewController {
             }
         }
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.transparent()
-    }
     
     //MARK: UICollectionViewDatasource
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -75,7 +70,8 @@ class MovieVC: UICollectionViewController {
 extension MovieVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
-        searchBar.resignFirstResponder()
+//        searchBar.endEditing(true)
+//        searchBar.resignFirstResponder()
         viewModel.search(query: query) { [weak self] in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()

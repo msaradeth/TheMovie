@@ -17,7 +17,7 @@ class DetailVC: UICollectionViewController {
         self.movie = movie
         let stretchHeaderFlowLayout = StretchHeaderFlowLayout()
         super.init(collectionViewLayout: stretchHeaderFlowLayout)
-          
+        
         //setup header image
         self.setupCollectionView()
         if movie.backdropImageCache != nil {
@@ -27,6 +27,15 @@ class DetailVC: UICollectionViewController {
         }else {
             self.loadImage(index: index, delegate: delegate)
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.transparent()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.visible()
     }
     
     //MARK:  setupCollectionView
