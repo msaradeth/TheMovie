@@ -9,14 +9,13 @@
 import UIKit
 
 class MovieVC: UICollectionViewController {
-    lazy var searchController: UISearchController = {
-       let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.delegate = self
-        searchController.searchBar.placeholder = "Search Movies"
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.tintColor = .white
+    lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width: 160, height: 44))
+        searchBar.delegate = self
+        searchBar.placeholder = "Search Movies"
+        searchBar.tintColor = .white
         UISearchBar.setSearchBarAppearance()
-        return searchController
+        return searchBar
     }()
     var viewModel: MovieViewModel
     
@@ -25,7 +24,7 @@ class MovieVC: UICollectionViewController {
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
         self.navigationItem.title = ""
         self.collectionView.register(MovieCell.self, forCellWithReuseIdentifier: MovieCell.cellIdentifier)
-        self.navigationItem.titleView = searchController.searchBar
+        self.navigationItem.titleView = searchBar
         
         //if given search text, search for the movies
         if let query = query {
@@ -70,13 +69,23 @@ class MovieVC: UICollectionViewController {
 extension MovieVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
-//        searchBar.endEditing(true)
-//        searchBar.resignFirstResponder()
+        resetSearchBar()
         viewModel.search(query: query) { [weak self] in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
             }
         }
+    }
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.showsCancelButton = true
+        return true
+    }
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        resetSearchBar()
+    }
+    func resetSearchBar() {
+        searchBar.endEditing(true)
+        searchBar.showsCancelButton = false
     }
 }
 
