@@ -31,11 +31,12 @@ class DetailVC: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.transparent()
+//        self.navigationController?.hidesBarsOnSwipe = false
+        self.navigationController?.navigationBar.setBackgroundImageTransparent()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.navigationBar.visible()
+        self.navigationController?.navigationBar.setBackgroundImageVisible()
     }
     
     //MARK:  setupCollectionView

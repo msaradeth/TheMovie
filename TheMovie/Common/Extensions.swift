@@ -10,11 +10,11 @@ import Foundation
 import UIKit
 
 extension UINavigationBar {
-    func transparent() {
+    func setBackgroundImageTransparent() {
         setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         shadowImage = UIImage()
     }
-    func visible() {
+    func setBackgroundImageVisible() {
         setBackgroundImage(nil, for: .default)
         shadowImage = nil
     }

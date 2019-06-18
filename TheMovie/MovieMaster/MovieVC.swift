@@ -35,6 +35,22 @@ class MovieVC: UICollectionViewController {
             }
         }
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
+//    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+//        return .fade
+//    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+//        self.navigationController?.hidesBarsOnSwipe = true
+//        self.setNeedsStatusBarAppearanceUpdate()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+    }
     
     //MARK: UICollectionViewDatasource
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

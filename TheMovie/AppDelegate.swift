@@ -21,14 +21,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navController = UINavigationController(rootViewController: vc)
         navController.navigationBar.barTintColor = .black
         navController.navigationBar.barStyle = .black
-        
+
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         window?.rootViewController = navController
         
         return true
     }
-  
+    
+
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return UIInterfaceOrientationMask.all
