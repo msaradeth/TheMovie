@@ -13,7 +13,7 @@ class HeaderView: UICollectionReusableView {
     lazy var imageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = UIView.ContentMode.scaleToFill  //.scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()

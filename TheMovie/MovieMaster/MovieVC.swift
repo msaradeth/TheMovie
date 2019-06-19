@@ -126,7 +126,7 @@ extension MovieVC: UICollectionViewDelegateFlowLayout {
         
         //Calc Cell width and height
         let cellWidth = availableWidth / numberOfColumns
-        let cellHeight = availableHeight / numberOfRows
+        let cellHeight = cellWidth + (cellWidth*0.3)   //vailableHeight / numberOfRows
         return CGSize(width: cellWidth, height: cellHeight)
     }
 }
