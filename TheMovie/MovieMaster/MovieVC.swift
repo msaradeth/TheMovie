@@ -129,4 +129,72 @@ extension MovieVC: UICollectionViewDelegateFlowLayout {
         let cellHeight = cellWidth + (cellWidth*0.3)   //vailableHeight / numberOfRows
         return CGSize(width: cellWidth, height: cellHeight)
     }
+    
+
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+//        private var distance: CGFloat {
+//            return scrollView!.contentInset.top
+//        }
+        let distance = scrollView.contentInset.top
+        print(scrollView.contentOffset.y)
+        
+        UIView.animate(withDuration: 0.3) {
+            if offsetY > abs(distance) {
+                self.updateAlpha(0)
+                
+                if offsetY < 0 {
+                    self.searchBar.isHidden = false
+                }else {
+                    self.searchBar.isHidden = true
+                }
+                
+            }else {
+                self.searchBar.isHidden = false
+            }
+        }
+        
+//        if offsetY > abs(distance) {
+//            updateAlpha(0)
+//            self.searchBar.isHidden = true
+//        }else {
+//            self.searchBar.isHidden = false
+//        }
+        
+//        if offsetY > -distance {
+//            let alpha = min(1, 1 - ((-distance + 120 - offsetY) / 64))
+////            updateAlpha(alpha)
+//            updateAlpha(0)
+//        } else {
+//            updateAlpha(0)
+//        }
+        
+    }
+    
+//    private var distance: CGFloat {
+//        return UIScrollView!.contentInset.top
+//    }
+    
+    private func updateAlpha(_ alpha: CGFloat = 0.0) {
+        let color = UIColor.black.withAlphaComponent(alpha)
+        let mImage = image(with: CGRect(x: 0, y: 0, width: 1, height: 1), color: color.withAlphaComponent(alpha))
+        //self.navigationController?.navigationBar.tintColor.withAlphaComponent(alpha) else { return }
+        self.navigationController?.navigationBar.setBackgroundImage(mImage, for: .default)
+//        self.searchBar.setBackgroundImage(mImage, for: .any, barMetrics: .default)
+        
+    }
+    
+    private func image(with rect: CGRect, color: UIColor) -> UIImage {
+        UIGraphicsBeginImageContext(rect.size)
+        defer {
+            UIGraphicsEndImageContext()
+        }
+        
+        let context = UIGraphicsGetCurrentContext()
+        context!.setFillColor(color.cgColor)
+        context!.fill(rect)
+        
+        return UIGraphicsGetImageFromCurrentImageContext()!
+    }
+
 }

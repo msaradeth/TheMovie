@@ -24,9 +24,9 @@ class StretchHeaderFlowLayout: UICollectionViewFlowLayout {
                 }
             }
         }
-        
         return layoutAttributes
     }
+    
     
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
         return true
