@@ -35,23 +35,8 @@ class MovieVC: UICollectionViewController {
             }
         }
     }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
 
-//    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-//        return .fade
-//    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-//        self.navigationController?.hidesBarsOnSwipe = true
-//        self.setNeedsStatusBarAppearanceUpdate()
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
+
     //MARK: UICollectionViewDatasource
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.count
@@ -65,7 +50,8 @@ class MovieVC: UICollectionViewController {
     
     //MARK: UICollectionViewDelegate
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let detailVC = DetailVC(movie: viewModel[indexPath.row], index: indexPath.row, delegate: viewModel)
+//        let detailVC = DetailVC(movie: viewModel[indexPath.row], index: indexPath.row, delegate: viewModel)
+        let detailVC = DetailVCScrollView(movie: viewModel[indexPath.row], index: indexPath.row, delegate: viewModel)
         self.navigationController?.pushViewController(detailVC, animated: true)
     }
     
@@ -86,6 +72,14 @@ extension MovieVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
         resetSearchBar()
+        viewModel.search(query: query) { [weak self] in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
+    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard let query = searchBar.text else { return }
         viewModel.search(query: query) { [weak self] in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
@@ -132,69 +126,22 @@ extension MovieVC: UICollectionViewDelegateFlowLayout {
     
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-//        private var distance: CGFloat {
-//            return scrollView!.contentInset.top
-//        }
-        let distance = scrollView.contentInset.top
-        print(scrollView.contentOffset.y)
+        guard let titleView = navigationItem.titleView, let navBar = self.navigationController?.navigationBar else { return }
+        let translationSuperviewY = scrollView.panGestureRecognizer.translation(in: scrollView.superview).y
+//        print(translationSuperviewY, scrollView.contentOffset.y)
         
         UIView.animate(withDuration: 0.3) {
-            if offsetY > abs(distance) {
-                self.updateAlpha(0)
-                
-                if offsetY < 0 {
-                    self.searchBar.isHidden = false
-                }else {
-                    self.searchBar.isHidden = true
-                }
-                
+            if translationSuperviewY > 0 {  //scroll dow
+                titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: 60)
+                navBar.setBackgroundImageVisible()
             }else {
-                self.searchBar.isHidden = false
+                var deltaHeight = titleView.frame.height - abs(scrollView.contentOffset.y)
+                deltaHeight = deltaHeight < 0 ? 0 : deltaHeight
+                titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
+                navBar.setBackgroundImageTransparent()
+                self.view.layoutIfNeeded()
             }
         }
-        
-//        if offsetY > abs(distance) {
-//            updateAlpha(0)
-//            self.searchBar.isHidden = true
-//        }else {
-//            self.searchBar.isHidden = false
-//        }
-        
-//        if offsetY > -distance {
-//            let alpha = min(1, 1 - ((-distance + 120 - offsetY) / 64))
-////            updateAlpha(alpha)
-//            updateAlpha(0)
-//        } else {
-//            updateAlpha(0)
-//        }
-        
-    }
-    
-//    private var distance: CGFloat {
-//        return UIScrollView!.contentInset.top
-//    }
-    
-    private func updateAlpha(_ alpha: CGFloat = 0.0) {
-        let color = UIColor.black.withAlphaComponent(alpha)
-        let mImage = image(with: CGRect(x: 0, y: 0, width: 1, height: 1), color: color.withAlphaComponent(alpha))
-        //self.navigationController?.navigationBar.tintColor.withAlphaComponent(alpha) else { return }
-        self.navigationController?.navigationBar.setBackgroundImage(mImage, for: .default)
-//        self.searchBar.setBackgroundImage(mImage, for: .any, barMetrics: .default)
-        
-    }
-    
-    private func image(with rect: CGRect, color: UIColor) -> UIImage {
-        UIGraphicsBeginImageContext(rect.size)
-        defer {
-            UIGraphicsEndImageContext()
-        }
-        
-        let context = UIGraphicsGetCurrentContext()
-        context!.setFillColor(color.cgColor)
-        context!.fill(rect)
-        
-        return UIGraphicsGetImageFromCurrentImageContext()!
-    }
 
+    }
 }
