@@ -138,9 +138,9 @@ extension MovieVC: UICollectionViewDelegateFlowLayout {
                 var deltaHeight = titleView.frame.height - abs(scrollView.contentOffset.y)
                 deltaHeight = deltaHeight < 0 ? 0 : deltaHeight
                 titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
-                navBar.setBackgroundImageTransparent()
-                self.view.layoutIfNeeded()
+                navBar.setBackgroundImageTransparent()                
             }
+            self.view.layoutIfNeeded()
         }
 
     }
