@@ -58,6 +58,7 @@ class MovieVC: UICollectionViewController {
     //MARK: UICollectionViewDelegate
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 //        let detailVC = DetailVC(movie: viewModel[indexPath.row], index: indexPath.row, delegate: viewModel)
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
         let detailVC = DetailVCScrollView(movie: viewModel[indexPath.row], index: indexPath.row, delegate: viewModel)
         self.navigationController?.pushViewController(detailVC, animated: true)
     }
@@ -145,7 +146,6 @@ extension MovieVC: UICollectionViewDelegateFlowLayout {
                 self.navigationController?.setNavigationBarHidden(false, animated: true)
                 return
             }
-//            navBar.setBackgroundImageVisible()
             deltaHeight = deltaHeight < 60 ? deltaHeight : 60
             titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
         }else {
@@ -154,7 +154,6 @@ extension MovieVC: UICollectionViewDelegateFlowLayout {
                 self.navigationController?.setNavigationBarHidden(true, animated: true)
                 return
             }
-//            navBar.setBackgroundImageTransparent()
             deltaHeight = deltaHeight < 0 ? 0 : deltaHeight
             titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
         }
