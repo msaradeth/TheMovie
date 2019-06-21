@@ -35,7 +35,14 @@ class MovieVC: UICollectionViewController {
             }
         }
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+    }
 
     //MARK: UICollectionViewDatasource
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -126,22 +133,30 @@ extension MovieVC: UICollectionViewDelegateFlowLayout {
     
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let titleView = navigationItem.titleView, let navBar = self.navigationController?.navigationBar else { return }
+        guard let titleView = navigationItem.titleView else { return }
         let translationSuperviewY = scrollView.panGestureRecognizer.translation(in: scrollView.superview).y
 //        print(translationSuperviewY, scrollView.contentOffset.y)
         
-        UIView.animate(withDuration: 0.3) {
-            if translationSuperviewY > 0 {  //scroll dow
-                titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: 60)
-                navBar.setBackgroundImageVisible()
-            }else {
-                var deltaHeight = titleView.frame.height - abs(scrollView.contentOffset.y)
-                deltaHeight = deltaHeight < 0 ? 0 : deltaHeight
-                titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
-                navBar.setBackgroundImageTransparent()                
+        var deltaHeight = titleView.frame.height + (translationSuperviewY * 0.1)
+        
+        if translationSuperviewY > 0 {  //pull down - positive Y
+//            print("scroll down: ", titleView.frame.height)
+            if titleView.frame.height >= 60 {
+                self.navigationController?.setNavigationBarHidden(false, animated: true)
+                return
             }
-            self.view.layoutIfNeeded()
+//            navBar.setBackgroundImageVisible()
+            deltaHeight = deltaHeight < 60 ? deltaHeight : 60
+            titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
+        }else {
+//            print("scroll up:", titleView.frame.height)
+            if titleView.frame.height <= 20 {
+                self.navigationController?.setNavigationBarHidden(true, animated: true)
+                return
+            }
+//            navBar.setBackgroundImageTransparent()
+            deltaHeight = deltaHeight < 0 ? 0 : deltaHeight
+            titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
         }
-
     }
 }

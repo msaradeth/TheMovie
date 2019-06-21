@@ -20,7 +20,6 @@ protocol LoadImagesDelegate {
 class MovieViewModel: NSObject {
     var movies: [Movie]
     var movieService: MovieService
-    var isSearching: Bool
     var count: Int {
         return movies.count
     }
@@ -31,14 +30,11 @@ class MovieViewModel: NSObject {
     init(movies: [Movie], movieService: MovieService) {
         self.movies = movies
         self.movieService = movieService
-        self.isSearching = false
     }
     
     func search(query: String, completion: @escaping () -> Void) {
-        guard query.count > 0, isSearching == false else { return }
-        isSearching = true
+        guard query.count > 0 else { return }
         movieService.search(query: query) { [weak self] (movies) in
-            self?.isSearching = false
             self?.movies = movies
             completion()
         }
@@ -50,6 +46,7 @@ extension MovieViewModel: LoadImagesDelegate, LoadImageService {
         let imageUrl = (imageType == .poster) ? movies[index].posterPath : movies[index].backdropPath
         
         loadImage(imageUrl: imageUrl) { [weak self] (image) in
+            guard index < self?.movies.count ?? 0 else { return }
             if imageType == .poster {
                 self?.movies[index].posterImageCache = image
             }else {
