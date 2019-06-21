@@ -131,31 +131,25 @@ extension MovieVC: UICollectionViewDelegateFlowLayout {
         let cellHeight = cellWidth + (cellWidth*0.3)   //vailableHeight / numberOfRows
         return CGSize(width: cellWidth, height: cellHeight)
     }
-    
 
+    
+    
+    
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let titleView = navigationItem.titleView else { return }
+        guard let titleView = navigationItem.titleView, let navBar = self.navigationController?.navigationBar else { return }
         let translationSuperviewY = scrollView.panGestureRecognizer.translation(in: scrollView.superview).y
-//        print(translationSuperviewY, scrollView.contentOffset.y)
-        
-        var deltaHeight = titleView.frame.height + (translationSuperviewY * 0.1)
-        
-        if translationSuperviewY > 0 {  //pull down - positive Y
-//            print("scroll down: ", titleView.frame.height)
-            if titleView.frame.height >= 60 {
-                self.navigationController?.setNavigationBarHidden(false, animated: true)
-                return
-            }
-            deltaHeight = deltaHeight < 60 ? deltaHeight : 60
-            titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
+        //        print(translationSuperviewY, scrollView.contentOffset.y)
+        if translationSuperviewY > 0 {  //scroll dow
+            titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: 60)
+            navBar.alpha = translationSuperviewY / 60
+            navBar.setBackgroundImageVisible()
         }else {
-//            print("scroll up:", titleView.frame.height)
-            if titleView.frame.height <= 20 {
-                self.navigationController?.setNavigationBarHidden(true, animated: true)
-                return
-            }
+            var deltaHeight = titleView.frame.height - abs(scrollView.contentOffset.y)
             deltaHeight = deltaHeight < 0 ? 0 : deltaHeight
             titleView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: deltaHeight)
+            navBar.setBackgroundImageTransparent()
         }
+        self.view.layoutIfNeeded()
     }
+    
 }
